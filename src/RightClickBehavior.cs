@@ -1,3 +1,4 @@
+using System.Reflection;
 using FapiQolPlugin;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,7 +8,7 @@ public class RightClickBehavior : MonoBehaviour, IPointerClickHandler
 
     void Start()
     {
-        Plugin.StaticLogger.LogDebug("RightClickBehavior attached and running.");
+        Plugin.StaticLogger.LogInfo("RightClickBehavior attached and running.");
     }
 
     // This method is called when the user clicks on the UI element
@@ -24,7 +25,7 @@ public class RightClickBehavior : MonoBehaviour, IPointerClickHandler
     // Method to be called when the right mouse button is clicked
     private void OnRightClick()
     {
-        Plugin.StaticLogger.LogDebug("Right-click detected on ButtonTown!");
+        Plugin.StaticLogger.LogInfo("Right-click detected on ButtonTown!");
         if (GameManager.i.TOMA.TradeCenterBoxGO.activeSelf) {
             GameManager.i.TOMA.CloseTradeCenter();
         } else {
