@@ -6,10 +6,15 @@ cp bin/Release/net472/FapiQolPlugin.dll bin/tmp/FapiQolPlugin
 cp bin/Release/net472/FapiQolPlugin.pdb bin/tmp/FapiQolPlugin
 cp readme.md bin/tmp/FapiQolPlugin
 
+# extract version number from project
+[xml]$xmlDocument = Get-Content -Path "FapiQolPlugin.csproj"
+$version = $xmlDocument.SelectNodes("//Project//PropertyGroup")[0].SelectSingleNode("Version").InnerText
+Write-Output "ver: $version"
+
 $compress = @{
   Path = "bin/tmp/FapiQolPlugin"
   CompressionLevel = "Fastest"
-  DestinationPath = "bin\FapiQolPlugin-Unity.Mono-win-x64-1.0.0.zip"
+  DestinationPath = "bin\FapiQolPlugin-Unity.Mono-win-x64-$version.zip"
   Force = $true
 }
 Compress-Archive  @compress

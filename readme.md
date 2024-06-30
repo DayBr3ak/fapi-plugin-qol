@@ -17,4 +17,5 @@ After that, just download the plugin in the release area, and place the folder F
 - [ ] Enhance all equipped gear by the set amount (TODO)
 - [ ] Add an estimation of how long an outpost has left to mine (similar to the gameplay planner) (TODO)
 - [x] Display ascension goal in the Reincarnation current level
+- [ ] Display how SWP/s is from the wave, how much is from the expeditions, and total
 - [ ] Add a side panel to the town that lists building/ building level/ building bonus (TODO)
