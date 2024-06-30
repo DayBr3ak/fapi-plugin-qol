@@ -25,8 +25,12 @@ public class RightClickBehavior : MonoBehaviour, IPointerClickHandler
     private void OnRightClick()
     {
         Plugin.StaticLogger.LogDebug("Right-click detected on ButtonTown!");
-        GameManager.i.EXPM.OpenTown();
-        GameManager.i.TOMA.ClickBuilding(9);
-        GameManager.i.TOMA.ClickTradeCenter();
+        if (GameManager.i.TOMA.TradeCenterBoxGO.activeSelf) {
+            GameManager.i.TOMA.CloseTradeCenter();
+        } else {
+            GameManager.i.EXPM.OpenTown();
+            GameManager.i.TOMA.ClickBuilding(9);
+            GameManager.i.TOMA.ClickTradeCenter();
+        }
     }
 }

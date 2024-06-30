@@ -9,7 +9,7 @@ cp readme.md bin/tmp/FapiQolPlugin
 $compress = @{
   Path = "bin/tmp/FapiQolPlugin"
   CompressionLevel = "Fastest"
-  DestinationPath = "bin\FapiQolPlugin-x64-win-1.0.0.zip"
+  DestinationPath = "bin\FapiQolPlugin-Unity.Mono-win-x64-1.0.0.zip"
   Force = $true
 }
 Compress-Archive  @compress
