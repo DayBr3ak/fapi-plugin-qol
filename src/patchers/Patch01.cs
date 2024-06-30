@@ -9,16 +9,6 @@ using System.Linq;
 using System.Reflection;
 
 using static Utils;
-// [HarmonyPatch(typeof(TownMain))]
-// [HarmonyPatch(nameof(TownMain.DisplayInfoDescription))]
-// class Patch01
-// {
-//     static bool Prefix(TownMain __instance)
-//     {
-//         Plugin.StaticLogger.LogInfo($"In Patch ! building Id is = {__instance.BuildingID}");
-//         return true;
-//     }
-// }
 
 [HarmonyPatch(typeof(TownMain))]
 class PatchClickTradeCenter
@@ -44,10 +34,9 @@ class PatchClickTradeCenter
     static void Postfix01(TownMain __instance)
     {
         Plugin.StaticLogger.LogInfo($"In Patch ! building Id is = {__instance.BuildingID}");
-        // __instance.TradeCenterDealRefreshTimeText.text = "hi";
         var parent = __instance.TradeCenterBoxGO;
 
-        ListGraphicComponentsOfGameObject(parent);
+        // ListGraphicComponentsOfGameObject(parent);
 
         GameObject textObject = FindComponentByName<TextMeshProUGUI>(parent, EXTENDED_TEXT_ID);
         if (textObject == null) {
@@ -64,7 +53,6 @@ class PatchClickTradeCenter
             // Adjust RectTransform settings if needed
             RectTransform rectTransform = textObject.GetComponent<RectTransform>();
             rectTransform.sizeDelta = new Vector2(300, 100); // Adjust as necessary
-            // rectTransform.anchoredPosition = Vector2.zero;  // Center the text in the panel
 
             RectTransform rectTransformLabel = targetText.GetComponent<RectTransform>();
             rectTransform.anchoredPosition = rectTransformLabel.anchoredPosition;
