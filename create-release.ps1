@@ -18,3 +18,9 @@ $compress = @{
   Force = $true
 }
 Compress-Archive  @compress
+
+git add -A
+git commit -m "Bump release $version"
+git tag $version
+git push origin master
+git push origin tag $version
