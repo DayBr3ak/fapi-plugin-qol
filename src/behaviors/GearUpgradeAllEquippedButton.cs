@@ -47,9 +47,14 @@ public class GearUpgradeAllEquippedButton : MonoBehaviour
 
         // TODO find how to setup a font
         textMeshPro.text = "Upgrade Equipped Gear"; // Set the text of the button
-        // textMeshPro.font = TMP_Asset.; // Set the font of the text
+
+        TMP_FontAsset targetFont = Utils.GetTMP_FontAsset("1MainBlackOutlined");
+        if (targetFont != null) {
+            textMeshPro.font = targetFont; // Set the font of the text
+        }
         textMeshPro.fontSize = 17;
-        // textMeshPro.alignment = TextAnchor.MiddleCenter; // Center the text
+        textMeshPro.fontStyle = FontStyles.Bold;
+        textMeshPro.alignment = TextAlignmentOptions.Center;
         textMeshPro.color = Color.black; // Set the text color
 
         // GameManager.i.E2M.ConfirmationText.text = "Do you want to upgrade all your gear at once?";
