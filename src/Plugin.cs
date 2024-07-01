@@ -16,8 +16,6 @@ namespace FapiQolPlugin;
 public class Plugin : BaseUnityPlugin
 {
     public static ManualLogSource StaticLogger { get; set; }
-    public GameObject LoaderObject;
-
     private void Awake()
     {
         // Plugin startup logic
@@ -25,63 +23,17 @@ public class Plugin : BaseUnityPlugin
         var harmony = new Harmony("com.example.fapiqolplugin");
         harmony.PatchAll();
 
-        StartCoroutine(WaitForComponentCoroutine2("ButtonTown", (GameObject gameObject) => {
-            var script = gameObject.AddComponent<RightClickBehavior>();
-            script.action = () => {
-                if (GameManager.i.TOMA.TradeCenterBoxGO.activeSelf && GameManager.i.EXPM.TownUI.activeSelf) {
-                    GameManager.i.TOMA.CloseTradeCenter();
-                } else {
-                    GameManager.i.EXPM.OpenTown();
-                    GameManager.i.TOMA.ClickBuilding(9);
-                    GameManager.i.TOMA.ClickTradeCenter();
-                }
-            };
+        StartCoroutine(WaitForComponentCoroutine("ButtonTown", (GameObject gameObject) => {
+            gameObject.AddComponent<TownButtonExtended>();
         }));
 
-        StartCoroutine(WaitForComponentCoroutine2("ExpeditionButton", (GameObject gameObject) => {
-            var script = gameObject.AddComponent<RightClickBehavior>();
-            script.action = () => {
-                GameObject.Find("Expedition").SetActive(true);
-                script.gameObject.GetComponent<Button>().onClick.Invoke();
-
-                GameManager.i.EXPM.OpenTown();
-                GameManager.i.TOMA.ClickBuilding(9);
-                GameManager.i.TOMA.ClickTradeCenter();
-            };
+        StartCoroutine(WaitForComponentCoroutine("ExpeditionButton", (GameObject gameObject) => {
+            gameObject.AddComponent<ExpeditionButtonExtended>();
         }));
-        // StartCoroutine(WaitForComponentCoroutine<SweetPotatoesStatTracker, RectTransform>("BattleWindow", false));
-        LoaderObject = new GameObject("PluginLoader");
-        // loaderObject.AddComponent<SweetPotatoesStatTracker>();
         Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
     }
 
-    IEnumerator WaitForComponentCoroutine<T, U>(string gameObjectName, bool secondCond) where T : MonoBehaviour where U : Component
-    {
-        // TODO add a timeout? and an error if timeout
-        GameObject targetGameObject = null;
-        while (targetGameObject == null)
-        {
-            // Try to find the target GameObject
-            targetGameObject = GameObject.Find(gameObjectName);
-            yield return null; // Wait until the next frame
-        }
-
-        if (secondCond) {
-            Component component = null;
-            while (component == null)
-            {
-                // Try to get the component on the target GameObject
-                component = targetGameObject.GetComponent<U>();
-                yield return null; // Wait until the next frame
-            }
-        }
-
-        // Attach the ExampleBehaviour script to the target GameObject
-        targetGameObject.AddComponent<T>();
-        Plugin.StaticLogger.LogDebug($"Behavior has been attached to the target {gameObjectName}.");
-    }
-
-    IEnumerator WaitForComponentCoroutine2(string gameObjectName, Action<GameObject> action)
+    IEnumerator WaitForComponentCoroutine(string gameObjectName, Action<GameObject> action)
     {
         // TODO add a timeout? and an error if timeout
         GameObject targetGameObject = null;

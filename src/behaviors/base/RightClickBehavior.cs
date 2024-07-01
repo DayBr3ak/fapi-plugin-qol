@@ -6,10 +6,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class RightClickBehavior : MonoBehaviour, IPointerDownHandler, IEventSystemHandler, IPointerUpHandler
+public abstract class RightClickBehavior : MonoBehaviour, IPointerDownHandler, IEventSystemHandler, IPointerUpHandler
 {
-
-    public Action action;
     private Image img;
     private Button button;
 
@@ -21,17 +19,14 @@ public class RightClickBehavior : MonoBehaviour, IPointerDownHandler, IEventSyst
     }
 
     // Method to be called when the right mouse button is clicked
-    private void OnRightClick()
+    private void _OnRightClick()
     {
         Plugin.StaticLogger.LogInfo($"Right-click detected on {gameObject.name}!");
-        if (action != null) {
-            EventSystem.current.SetSelectedGameObject(gameObject);
-            action();
-        } else {
-            Plugin.StaticLogger.LogInfo("Nothing to do");
-        }
+        EventSystem.current.SetSelectedGameObject(gameObject);
+        OnRightClick();
     }
 
+    protected abstract void OnRightClick();
     public void OnPointerDown(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Right) {
@@ -47,7 +42,7 @@ public class RightClickBehavior : MonoBehaviour, IPointerDownHandler, IEventSyst
             if (img != null && button != null) {
                 img.color = button.colors.normalColor;
             }
-            OnRightClick();
+            _OnRightClick();
         }
     }
 }
