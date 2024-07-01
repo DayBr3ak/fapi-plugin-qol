@@ -21,7 +21,3 @@ After that, just download the plugin in the release area, and place the folder F
 - [ ] _Display how much SWP/s is from the wave, how much is from the expeditions, and total_
 - [ ] Add a side panel to the town that lists building/ building level/ building bonus (TODO)
 
-
--- notes
-
-Refining all items: Pre calc the amount necessary for every item - refuse if not enough in bank - warn if over 50% is used

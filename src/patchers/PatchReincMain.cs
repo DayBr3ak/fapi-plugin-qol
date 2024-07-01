@@ -35,5 +35,12 @@ class PatchReincMainUpdate
 
         __instance.ReincarnationExpSlider.value = (float)progressRatio;
         __instance.ReincarnationExpText.text = $"{Form.Numb((double)progress, 12, 2, 0, 3)}/{Form.Numb((double)goalRemaining, 12, 2, 0, 3)}";
+
+        if (progressRatio >= 1.0) {
+            // goal is reached
+            __instance.ReincarnationExpText.color = Color.green;
+        } else {
+            __instance.ReincarnationExpText.color = Color.white;
+        }
     }
 }
