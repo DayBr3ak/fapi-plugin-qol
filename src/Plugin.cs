@@ -30,6 +30,17 @@ public class Plugin : BaseUnityPlugin
         StartCoroutine(WaitForComponentCoroutine("ExpeditionButton", (GameObject gameObject) => {
             gameObject.AddComponent<ExpeditionButtonExtended>();
         }));
+
+        StartCoroutine(WaitForComponentCoroutine("ValidEnhancingButton", (GameObject gameObject) => {
+            Plugin.StaticLogger.LogInfo($"{gameObject.name} on {gameObject.gameObject.name}");
+            var panel = GameObject.Find("EquipmentMain");
+
+            var btn = panel.AddComponent<GearUpgradeAllEquippedButton>();
+
+            var original = GameObject.Find("ValidEnhancingButton");
+            btn.originalButton = original.GetComponent<Button>();
+            btn.offset = new Vector2(0, 130);
+        }));
         Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
     }
 
@@ -55,45 +66,8 @@ public class Plugin : BaseUnityPlugin
                 GetAllGameObjectsInScene();
             }
             if (Input.GetKeyDownInt(KeyCode.F2)) {
-                return;
                 Logger.LogInfo("F2 Key was pressed");
-
-                ItemData[] items = GameManager.i.PD.EquippedItems;
-                double levelsToBuy =  GameManager.i.PD.RefiningLevels;
-                Dictionary<int, double> costMap = new Dictionary<int, double>();
-
-                foreach (var item in items) {
-                    // Logger.LogInfo($"{item.ItemName}: {item.AreaDropped}");
-                    double cost = GameManager.i.E2M.RefineCost(item, levelsToBuy);
-                    if (costMap.ContainsKey(item.ItemRarity)) {
-                        costMap[item.ItemRarity] += cost;
-                    } else {
-                        costMap.Add(item.ItemRarity, cost);
-                    }
-                }
-
-                bool canRefine = true;
-                foreach (var pair in costMap) {
-                    if(GameManager.i.E2M.GetRefineMaterial(pair.Key) < pair.Value) {
-                        canRefine = false;
-                        break;
-                    }
-                }
-                if (canRefine) {
-                    foreach (var item in items) {
-                        double cost = GameManager.i.E2M.RefineCost(item, levelsToBuy);
-                        item.RefineLevel += levelsToBuy;
-                        item.UpdateBonuses();
-                        GameManager.i.E2M.AddRefineMaterial(item.ItemRarity, -cost);
-                    }
-                    GameManager.i.ADM.PlayClickEnhancing();
-                    Logger.LogInfo($"Did refine all 6 equipments with {levelsToBuy}");
-                    GameManager.i.E2M.InitEquipment();
-                    GameManager.i.E2M.RefineValueChanged();
-                    GameManager.i.E2M.UpdateTotals();
-                } else {
-                    Logger.LogInfo($"Not enough materials");
-                }
+                return;
 
 
                 // GameObject targetObject =  GameObject.Find("ButtonTown");
@@ -148,6 +122,8 @@ public class Plugin : BaseUnityPlugin
                     //     }
                     // }
                 }
+
+
             }
         } catch (Exception ex) {
             Logger.LogError(ex);

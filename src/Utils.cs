@@ -8,6 +8,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using FapiQolPlugin;
+using System.Reflection;
 
 public class Utils {
     public static void cloneTextMeshProUGUI(ref TextMeshProUGUI destination, TextMeshProUGUI other) {
@@ -22,6 +23,13 @@ public class Utils {
         destination.margin = other.margin;
         destination.fontStyle = other.fontStyle;
         destination.fontWeight = other.fontWeight;
+
+        Plugin.StaticLogger.LogInfo("font " + destination.font.ToString());
+        Plugin.StaticLogger.LogInfo("fontSize " + destination.fontSize.ToString());
+        Plugin.StaticLogger.LogInfo("color " + destination.color.ToString());
+        Plugin.StaticLogger.LogInfo("alignment " + destination.alignment.ToString());
+        Plugin.StaticLogger.LogInfo("fontStyle " + destination.fontStyle.ToString());
+        Plugin.StaticLogger.LogInfo("fontWeight " + destination.fontWeight.ToString());
     }
 
     public static GameObject FindComponentByName<T>(GameObject gameObject, string cId) where T: Component {
@@ -61,6 +69,100 @@ public class Utils {
         foreach (var component in graphicComponents)
         {
             Plugin.StaticLogger.LogInfo($"{component.GetType().Name} on {component.gameObject.name}");
+        }
+    }
+
+    public static List<Button> GetButtons(GameObject obj) {
+        List<Button> buttons = new List<Button>();
+        // Print all components attached to the GameObject
+        Component[] components = obj.GetComponents<Component>();
+        foreach (Component component in components)
+        {
+            Plugin.StaticLogger.LogInfo($"Component: {component.GetType().Name}");
+            if (component.GetType().Name == "Button") {
+                buttons.Add(component as Button);
+            }
+        }
+
+        // Recursively inspect all child objects
+        foreach (Transform child in obj.transform)
+        {
+            var r = GetButtons(child.gameObject);
+            buttons.AddRange(r);
+        }
+
+        return buttons;
+    }
+
+    public static List<TextMeshProUGUI> GetTextMeshProUGUI(GameObject obj) {
+        List<TextMeshProUGUI> texts = new List<TextMeshProUGUI>();
+        // Print all components attached to the GameObject
+        Component[] components = obj.GetComponents<Component>();
+        foreach (Component component in components)
+        {
+            Plugin.StaticLogger.LogInfo($"Component: {component.GetType().Name}");
+            if (component.GetType().Name == "TextMeshProUGUI") {
+                texts.Add(component as TextMeshProUGUI);
+            }
+        }
+
+        // Recursively inspect all child objects
+        foreach (Transform child in obj.transform)
+        {
+            var r = GetTextMeshProUGUI(child.gameObject);
+            texts.AddRange(r);
+        }
+
+        return texts;
+    }
+
+    public static void Inspect(GameObject obj)
+    {
+        Plugin.StaticLogger.LogInfo($"Inspecting GameObject: {obj.name}");
+
+        // Print all components attached to the GameObject
+        Component[] components = obj.GetComponents<Component>();
+        foreach (Component component in components)
+        {
+            Plugin.StaticLogger.LogInfo($"Component: {component.GetType().Name}");
+            InspectComponent(component);
+        }
+
+        // Recursively inspect all child objects
+        foreach (Transform child in obj.transform)
+        {
+            Inspect(child.gameObject);
+        }
+    }
+
+    public static void InspectComponent(Component component)
+    {
+        FieldInfo[] fields = component.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        PropertyInfo[] properties = component.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+        // Print all fields of the component
+        foreach (FieldInfo field in fields)
+        {
+            object value = field.GetValue(component);
+            Plugin.StaticLogger.LogInfo($"  Field: {field.Name} = {value}");
+        }
+
+        // Print all properties of the component
+        foreach (PropertyInfo property in properties)
+        {
+            if (property.CanRead)
+            {
+                object value;
+                try
+                {
+                    value = property.GetValue(component, null);
+                }
+                catch
+                {
+                    value = "N/A";
+                }
+                Plugin.StaticLogger.LogInfo($"  Property: {property.Name} = {value}");
+            }
         }
     }
 }
