@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.Mono;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace FapiQolPlugin;
 
@@ -14,6 +16,7 @@ namespace FapiQolPlugin;
 public class Plugin : BaseUnityPlugin
 {
     public static ManualLogSource StaticLogger { get; set; }
+    public GameObject LoaderObject;
 
     private void Awake()
     {
@@ -22,11 +25,37 @@ public class Plugin : BaseUnityPlugin
         var harmony = new Harmony("com.example.fapiqolplugin");
         harmony.PatchAll();
 
-        StartCoroutine(WaitForComponentCoroutine<RightClickBehavior, RectTransform>("ButtonTown"));
+        StartCoroutine(WaitForComponentCoroutine2("ButtonTown", (GameObject gameObject) => {
+            var script = gameObject.AddComponent<RightClickBehavior>();
+            script.action = () => {
+                if (GameManager.i.TOMA.TradeCenterBoxGO.activeSelf && GameManager.i.EXPM.TownUI.activeSelf) {
+                    GameManager.i.TOMA.CloseTradeCenter();
+                } else {
+                    GameManager.i.EXPM.OpenTown();
+                    GameManager.i.TOMA.ClickBuilding(9);
+                    GameManager.i.TOMA.ClickTradeCenter();
+                }
+            };
+        }));
+
+        StartCoroutine(WaitForComponentCoroutine2("ExpeditionButton", (GameObject gameObject) => {
+            var script = gameObject.AddComponent<RightClickBehavior>();
+            script.action = () => {
+                GameObject.Find("Expedition").SetActive(true);
+                script.gameObject.GetComponent<Button>().onClick.Invoke();
+
+                GameManager.i.EXPM.OpenTown();
+                GameManager.i.TOMA.ClickBuilding(9);
+                GameManager.i.TOMA.ClickTradeCenter();
+            };
+        }));
+        // StartCoroutine(WaitForComponentCoroutine<SweetPotatoesStatTracker, RectTransform>("BattleWindow", false));
+        LoaderObject = new GameObject("PluginLoader");
+        // loaderObject.AddComponent<SweetPotatoesStatTracker>();
         Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
     }
 
-    IEnumerator WaitForComponentCoroutine<T, U>(string gameObjectName) where T : MonoBehaviour where U : Component
+    IEnumerator WaitForComponentCoroutine<T, U>(string gameObjectName, bool secondCond) where T : MonoBehaviour where U : Component
     {
         // TODO add a timeout? and an error if timeout
         GameObject targetGameObject = null;
@@ -37,17 +66,34 @@ public class Plugin : BaseUnityPlugin
             yield return null; // Wait until the next frame
         }
 
-        Component component = null;
-        while (component == null)
-        {
-            // Try to get the component on the target GameObject
-            component = targetGameObject.GetComponent<U>();
-            yield return null; // Wait until the next frame
+        if (secondCond) {
+            Component component = null;
+            while (component == null)
+            {
+                // Try to get the component on the target GameObject
+                component = targetGameObject.GetComponent<U>();
+                yield return null; // Wait until the next frame
+            }
         }
 
         // Attach the ExampleBehaviour script to the target GameObject
         targetGameObject.AddComponent<T>();
         Plugin.StaticLogger.LogDebug($"Behavior has been attached to the target {gameObjectName}.");
+    }
+
+    IEnumerator WaitForComponentCoroutine2(string gameObjectName, Action<GameObject> action)
+    {
+        // TODO add a timeout? and an error if timeout
+        GameObject targetGameObject = null;
+        while (targetGameObject == null)
+        {
+            // Try to find the target GameObject
+            targetGameObject = GameObject.Find(gameObjectName);
+            yield return null; // Wait until the next frame
+        }
+
+        action(targetGameObject);
+        Plugin.StaticLogger.LogDebug($"Target {gameObjectName} found.");
     }
 
     private void Update() {
@@ -57,7 +103,46 @@ public class Plugin : BaseUnityPlugin
                 GetAllGameObjectsInScene();
             }
             if (Input.GetKeyDownInt(KeyCode.F2)) {
+                return;
                 Logger.LogInfo("F2 Key was pressed");
+
+                ItemData[] items = GameManager.i.PD.EquippedItems;
+                double levelsToBuy =  GameManager.i.PD.RefiningLevels;
+                Dictionary<int, double> costMap = new Dictionary<int, double>();
+
+                foreach (var item in items) {
+                    // Logger.LogInfo($"{item.ItemName}: {item.AreaDropped}");
+                    double cost = GameManager.i.E2M.RefineCost(item, levelsToBuy);
+                    if (costMap.ContainsKey(item.ItemRarity)) {
+                        costMap[item.ItemRarity] += cost;
+                    } else {
+                        costMap.Add(item.ItemRarity, cost);
+                    }
+                }
+
+                bool canRefine = true;
+                foreach (var pair in costMap) {
+                    if(GameManager.i.E2M.GetRefineMaterial(pair.Key) < pair.Value) {
+                        canRefine = false;
+                        break;
+                    }
+                }
+                if (canRefine) {
+                    foreach (var item in items) {
+                        double cost = GameManager.i.E2M.RefineCost(item, levelsToBuy);
+                        item.RefineLevel += levelsToBuy;
+                        item.UpdateBonuses();
+                        GameManager.i.E2M.AddRefineMaterial(item.ItemRarity, -cost);
+                    }
+                    GameManager.i.ADM.PlayClickEnhancing();
+                    Logger.LogInfo($"Did refine all 6 equipments with {levelsToBuy}");
+                    GameManager.i.E2M.InitEquipment();
+                    GameManager.i.E2M.RefineValueChanged();
+                    GameManager.i.E2M.UpdateTotals();
+                } else {
+                    Logger.LogInfo($"Not enough materials");
+                }
+
 
                 // GameObject targetObject =  GameObject.Find("ButtonTown");
                 // if (targetObject != null)
@@ -89,6 +174,28 @@ public class Plugin : BaseUnityPlugin
             }
             if (Input.GetKeyDownInt(KeyCode.F3)) {
                 Logger.LogInfo("F3 Key was pressed");
+                // Find all MonoBehaviour scripts in the scene
+                MonoBehaviour[] scripts = FindObjectsOfType<MonoBehaviour>();
+                Logger.LogInfo($"Found {scripts.Length} scripts");
+
+                foreach (var script in scripts)
+                {
+                    Logger.LogInfo($"{script.name} {script.GetType().FullName} {script.tag} {script.gameObject.name}");
+
+                    // if (script.gameObject.name == "ExpeditionButton") {
+                    //     if (script.gameObject.GetComponent<RightClickBehavior2>() == null) {
+                    //         var sc = script.gameObject.AddComponent<RightClickBehavior2>();
+                    //         sc.action = () => {
+                    //             GameObject.Find("Expedition").SetActive(true);
+                    //             script.gameObject.GetComponent<Button>().onClick.Invoke();
+
+                    //             GameManager.i.EXPM.OpenTown();
+                    //             GameManager.i.TOMA.ClickBuilding(9);
+                    //             GameManager.i.TOMA.ClickTradeCenter();
+                    //         };
+                    //     }
+                    // }
+                }
             }
         } catch (Exception ex) {
             Logger.LogError(ex);

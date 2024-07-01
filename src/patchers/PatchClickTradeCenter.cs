@@ -16,7 +16,7 @@ class PatchClickTradeCenter
     static string EXTENDED_TEXT_ID = "PluginText1";
 
     [HarmonyPostfix]
-    [HarmonyPatch("BuildTick")]
+    [HarmonyPatch(nameof(TownMain.BuildTick))]
     static void Postfix(TownMain __instance) {
         if (__instance.TradeCenterBoxGO.activeSelf) {
             var parent = __instance.TradeCenterBoxGO;
@@ -30,7 +30,7 @@ class PatchClickTradeCenter
     }
 
     [HarmonyPostfix]
-    [HarmonyPatch("ClickTradeCenter")]
+    [HarmonyPatch(nameof(TownMain.ClickTradeCenter))]
     static void Postfix01(TownMain __instance)
     {
         Plugin.StaticLogger.LogInfo($"In Patch ! building Id is = {__instance.BuildingID}");
