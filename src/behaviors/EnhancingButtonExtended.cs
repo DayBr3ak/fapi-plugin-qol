@@ -14,7 +14,7 @@ class EnhancingButtonExtended : RightClickBehavior
     private Button buttonCancel;
 
 
-    public void Start()
+    public new void Start()
     {
         base.Start();
         if (!GameManager.i.E2M.ConfirmationBox)
@@ -30,6 +30,18 @@ class EnhancingButtonExtended : RightClickBehavior
             boxText = confirmationBox.transform.FindChildByName("DeleteAllText").GetComponent<TextMeshProUGUI>();
             buttonYes = confirmationBox.transform.FindChildByName("YesDeleteAll").GetComponent<Button>();
             buttonCancel = confirmationBox.transform.FindChildByName("NoDontDelete").GetComponent<Button>();
+
+            // the original backdrop has an extra trash all button we dont want
+            var extrabtn = confirmationBox.transform.FindChildByName("ShowButton");
+            if (extrabtn != null)
+            {
+                extrabtn.gameObject.SetActive(false);
+                Destroy(extrabtn.gameObject);
+            }
+            else
+            {
+                Plugin.StaticLogger.LogInfo($"ShowButton not found");
+            }
         }
         catch (Exception)
         {
