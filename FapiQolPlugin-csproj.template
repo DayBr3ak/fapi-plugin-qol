@@ -12,6 +12,9 @@
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
     <RootNamespace>FapiQolPlugin</RootNamespace>
+
+    <!-- Define a property that uses the environment variable -->
+    <GameDirPath>__REPLACED_VALUE__</GameDirPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,15 +26,15 @@
 
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-        <HintPath>D:\SteamLibrary\steamapps\common\Farmer Against Potatoes Idle\Farmer Against Potatoes Idle_Data\Managed\Assembly-CSharp.dll</HintPath>
+        <HintPath>$(GameDirPath)\Farmer Against Potatoes Idle_Data\Managed\Assembly-CSharp.dll</HintPath>
         <Private>False</Private>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-        <HintPath>D:\SteamLibrary\steamapps\common\Farmer Against Potatoes Idle\Farmer Against Potatoes Idle_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+        <HintPath>$(GameDirPath)\Farmer Against Potatoes Idle_Data\Managed\Unity.TextMeshPro.dll</HintPath>
         <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-        <HintPath>D:\SteamLibrary\steamapps\common\Farmer Against Potatoes Idle\Farmer Against Potatoes Idle_Data\Managed\UnityEngine.UI.dll</HintPath>
+        <HintPath>$(GameDirPath)\Farmer Against Potatoes Idle_Data\Managed\UnityEngine.UI.dll</HintPath>
         <Private>False</Private>
     </Reference>
   </ItemGroup>

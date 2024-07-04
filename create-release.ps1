@@ -1,3 +1,4 @@
+Invoke-Expression "& .\find-fapi-install.ps1"
 
 dotnet build --configuration Release
 rm -Force -Recurse bin/tmp/FapiQolPlugin
