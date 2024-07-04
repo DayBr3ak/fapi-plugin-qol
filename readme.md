@@ -20,4 +20,5 @@ After that, just download the plugin in the release area, and place the folder F
 - [x] Display ascension goal in the Reincarnation current level
 - [ ] _Display how much SWP/s is from the wave, how much is from the expeditions, and total_
 - [ ] Add a side panel to the town that lists building/ building level/ building bonus (TODO)
+- [ ] Reorder UI Bottom bar? (TODO)
 
