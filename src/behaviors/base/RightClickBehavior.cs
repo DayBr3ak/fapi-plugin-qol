@@ -11,7 +11,7 @@ public abstract class RightClickBehavior : MonoBehaviour, IPointerDownHandler, I
     private Image img;
     private Button button;
 
-    void Start()
+    protected void Start()
     {
         Plugin.StaticLogger.LogInfo($"RightClickBehavior attached and running on {gameObject.name}.");
         button = gameObject.GetComponent<Button>();
@@ -29,8 +29,10 @@ public abstract class RightClickBehavior : MonoBehaviour, IPointerDownHandler, I
     protected abstract void OnRightClick();
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Right) {
-            if (img != null && button != null) {
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            if (img != null && button != null)
+            {
                 img.color = button.colors.pressedColor;
             }
         }
@@ -38,8 +40,10 @@ public abstract class RightClickBehavior : MonoBehaviour, IPointerDownHandler, I
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Right) {
-            if (img != null && button != null) {
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            if (img != null && button != null)
+            {
                 img.color = button.colors.normalColor;
             }
             _OnRightClick();

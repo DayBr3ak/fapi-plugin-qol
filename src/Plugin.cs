@@ -23,24 +23,28 @@ public class Plugin : BaseUnityPlugin
         var harmony = new Harmony("com.example.fapiqolplugin");
         harmony.PatchAll();
 
-        StartCoroutine(WaitForComponentCoroutine("ButtonTown", (GameObject gameObject) => {
+        gameObject.AddComponent<EnhancingButtonExtendedLoader>();
+
+        StartCoroutine(WaitForComponentCoroutine("ButtonTown", (GameObject gameObject) =>
+        {
             gameObject.AddComponent<TownButtonExtended>();
         }));
 
-        StartCoroutine(WaitForComponentCoroutine("ExpeditionButton", (GameObject gameObject) => {
+        StartCoroutine(WaitForComponentCoroutine("ExpeditionButton", (GameObject gameObject) =>
+        {
             gameObject.AddComponent<ExpeditionButtonExtended>();
         }));
 
-        StartCoroutine(WaitForComponentCoroutine("ValidEnhancingButton", (GameObject gameObject) => {
-            Plugin.StaticLogger.LogInfo($"{gameObject.name} on {gameObject.gameObject.name}");
-            var panel = GameObject.Find("EquipmentMain");
+        // StartCoroutine(WaitForComponentCoroutine("ValidEnhancingButton", (GameObject gameObject) => {
+        //     Plugin.StaticLogger.LogInfo($"{gameObject.name} on {gameObject.gameObject.name}");
+        //     var panel = GameObject.Find("EquipmentMain");
 
-            var btn = panel.AddComponent<GearUpgradeAllEquippedButton>();
+        //     var btn = panel.AddComponent<GearUpgradeAllEquippedButton>();
 
-            var original = GameObject.Find("ValidEnhancingButton");
-            btn.originalButton = original.GetComponent<Button>();
-            btn.offset = new Vector2(0, 130);
-        }));
+        //     var original = GameObject.Find("ValidEnhancingButton");
+        //     btn.originalButton = original.GetComponent<Button>();
+        //     btn.offset = new Vector2(0, 130);
+        // }));
         Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
     }
 
@@ -59,13 +63,17 @@ public class Plugin : BaseUnityPlugin
         Plugin.StaticLogger.LogDebug($"Target {gameObjectName} found.");
     }
 
-    private void Update() {
-        try {
-            if (Input.GetKeyDownInt(KeyCode.F1)) {
+    private void Update()
+    {
+        try
+        {
+            if (Input.GetKeyDownInt(KeyCode.F1))
+            {
                 Logger.LogInfo("F1 Key was pressed");
                 GetAllGameObjectsInScene();
             }
-            if (Input.GetKeyDownInt(KeyCode.F2)) {
+            if (Input.GetKeyDownInt(KeyCode.F2))
+            {
                 Logger.LogInfo("F2 Key was pressed");
                 return;
 
@@ -98,7 +106,8 @@ public class Plugin : BaseUnityPlugin
                 //     Debug.LogError("Target GameObject not found.");
                 // }
             }
-            if (Input.GetKeyDownInt(KeyCode.F3)) {
+            if (Input.GetKeyDownInt(KeyCode.F3))
+            {
                 Logger.LogInfo("F3 Key was pressed");
                 // Find all MonoBehaviour scripts in the scene
                 MonoBehaviour[] scripts = FindObjectsOfType<MonoBehaviour>();
@@ -125,7 +134,9 @@ public class Plugin : BaseUnityPlugin
 
 
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             Logger.LogError(ex);
         }
     }

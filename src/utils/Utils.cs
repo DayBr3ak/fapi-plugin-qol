@@ -9,9 +9,12 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using FapiQolPlugin;
 using System.Reflection;
+using System.Collections;
 
-public class Utils {
-    public static void cloneTextMeshProUGUI(ref TextMeshProUGUI destination, TextMeshProUGUI other) {
+public class Utils
+{
+    public static void cloneTextMeshProUGUI(ref TextMeshProUGUI destination, TextMeshProUGUI other)
+    {
         destination.text = other.text;
         destination.font = other.font;
         destination.fontSize = other.fontSize;
@@ -32,12 +35,15 @@ public class Utils {
         Plugin.StaticLogger.LogInfo("fontWeight " + destination.fontWeight.ToString());
     }
 
-    public static GameObject FindComponentByName<T>(GameObject gameObject, string cId) where T: Component {
+    public static GameObject FindComponentByName<T>(GameObject gameObject, string cId) where T : Component
+    {
         List<Component> graphicComponents = new List<Component>();
         T[] textMeshProUGUIs = gameObject.GetComponentsInChildren<T>();
         graphicComponents.AddRange(textMeshProUGUIs);
-        foreach (var component in graphicComponents) {
-            if (component.gameObject.name == cId) {
+        foreach (var component in graphicComponents)
+        {
+            if (component.gameObject.name == cId)
+            {
                 return component.gameObject;
             }
         }
@@ -72,14 +78,16 @@ public class Utils {
         }
     }
 
-    public static List<Button> GetButtons(GameObject obj) {
+    public static List<Button> GetButtons(GameObject obj)
+    {
         List<Button> buttons = new List<Button>();
         // Print all components attached to the GameObject
         Component[] components = obj.GetComponents<Component>();
         foreach (Component component in components)
         {
-            Plugin.StaticLogger.LogInfo($"Component: {component.GetType().Name}");
-            if (component.GetType().Name == "Button") {
+            // Plugin.StaticLogger.LogInfo($"Component: {component.GetType().Name}");
+            if (component.GetType().Name == "Button")
+            {
                 buttons.Add(component as Button);
             }
         }
@@ -94,14 +102,16 @@ public class Utils {
         return buttons;
     }
 
-    public static List<TextMeshProUGUI> GetTextMeshProUGUI(GameObject obj) {
+    public static List<TextMeshProUGUI> GetTextMeshProUGUI(GameObject obj)
+    {
         List<TextMeshProUGUI> texts = new List<TextMeshProUGUI>();
         // Print all components attached to the GameObject
         Component[] components = obj.GetComponents<Component>();
         foreach (Component component in components)
         {
-            Plugin.StaticLogger.LogInfo($"Component: {component.GetType().Name}");
-            if (component.GetType().Name == "TextMeshProUGUI") {
+            // Plugin.StaticLogger.LogInfo($"Component: {component.GetType().Name}");
+            if (component.GetType().Name == "TextMeshProUGUI")
+            {
                 texts.Add(component as TextMeshProUGUI);
             }
         }
@@ -166,24 +176,36 @@ public class Utils {
         }
     }
 
-    public static Dictionary<string, TMP_FontAsset> _fontCache = new Dictionary<string, TMP_FontAsset>();
-    public static TMP_FontAsset GetTMP_FontAsset(string path) {
-        if (_fontCache.ContainsKey(path)) {
-            return _fontCache[path];
+    public static IEnumerator WaitForComponentCoroutine(string gameObjectName)
+    {
+        GameObject targetGameObject = null;
+        while (targetGameObject == null)
+        {
+            targetGameObject = GameObject.Find(gameObjectName);
+            yield return null; // Wait until the next frame
         }
 
-        var fonts = UnityEngine.Object.FindObjectsOfType<TMP_FontAsset>();
-        TMP_FontAsset targetFont = null;
-        foreach (TMP_FontAsset font in fonts) {
-            if (font.name == path) {
-                targetFont = font;
-                break;
+        Plugin.StaticLogger.LogDebug($"Target {gameObjectName} found.");
+        yield return targetGameObject;
+    }
+
+    Transform FindChildByName(Transform parent, string name)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == name)
+            {
+                return child;
+            }
+
+            // Recursive call to search within the child's children
+            Transform result = FindChildByName(child, name);
+            if (result != null)
+            {
+                return result;
             }
         }
 
-        if (targetFont != null) {
-            _fontCache.Add(path, targetFont);
-        }
-        return targetFont;
+        return null; // No child with the specified name was found
     }
 }

@@ -48,8 +48,9 @@ public class GearUpgradeAllEquippedButton : MonoBehaviour
         // TODO find how to setup a font
         textMeshPro.text = "Upgrade Equipped Gear"; // Set the text of the button
 
-        TMP_FontAsset targetFont = Utils.GetTMP_FontAsset("1MainBlackOutlined");
-        if (targetFont != null) {
+        TMP_FontAsset targetFont = FontCache.GetTMP_FontAsset("1MainBlackOutlined");
+        if (targetFont != null)
+        {
             textMeshPro.font = targetFont; // Set the font of the text
         }
         textMeshPro.fontSize = 17;
@@ -61,17 +62,22 @@ public class GearUpgradeAllEquippedButton : MonoBehaviour
         var confirmationBoxClone = Instantiate(GameManager.i.E2M.ConfirmationBox, GameManager.i.E2M.ConfirmationBox.transform.parent);
         var boxButtons = Utils.GetButtons(confirmationBoxClone);
         Plugin.StaticLogger.LogInfo($"Found {boxButtons.Count} buttons");
-        foreach (var b in boxButtons) {
-            if (b.name == "YesDeleteAll") {
+        foreach (var b in boxButtons)
+        {
+            if (b.name == "YesDeleteAll")
+            {
                 b.onClick = new Button.ButtonClickedEvent();
-                b.onClick.AddListener(() => {
+                b.onClick.AddListener(() =>
+                {
                     InventoryUtils.RefineAllEquipment();
                     confirmationBoxClone.SetActive(false);
                 });
             }
-            if (b.name == "NoDontDelete") {
+            if (b.name == "NoDontDelete")
+            {
                 b.onClick = new Button.ButtonClickedEvent();
-                b.onClick.AddListener(() => {
+                b.onClick.AddListener(() =>
+                {
                     confirmationBoxClone.SetActive(false);
                 });
             }
@@ -81,10 +87,13 @@ public class GearUpgradeAllEquippedButton : MonoBehaviour
 
         // Add Button component
         Button button = buttonObject.AddComponent<Button>();
-        button.onClick.AddListener(() => {
-            if (!confirmationBoxClone.activeSelf) {
-                foreach (var text in innerTexts) {
-                    text.text = $"Do you want to upgrade all your gear for {GameManager.i.PD.RefiningLevels} levels with cost:\n" + InventoryUtils.getCostText() ;
+        button.onClick.AddListener(() =>
+        {
+            if (!confirmationBoxClone.activeSelf)
+            {
+                foreach (var text in innerTexts)
+                {
+                    text.text = $"Do you want to upgrade all your gear for {GameManager.i.PD.RefiningLevels} levels with cost:\n" + InventoryUtils.getCostText();
                 }
                 confirmationBoxClone.SetActive(true);
                 // Utils.Inspect(xx);

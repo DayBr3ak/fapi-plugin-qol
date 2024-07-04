@@ -15,7 +15,7 @@ After that, just download the plugin in the release area, and place the folder F
 - [x] Right Click on the town tab to open the town center
 - [x] Right Click on the expedition tab to open the town center
 - [ ] Auto equip gear if IR is better than current (TODO)
-- [x] Enhance all equipped gear by the set amount
+- [x] Right Click on the Gear Enhance Button will enhance all equipped gear, after asking for confirmation
 - [ ] Add an estimation of how long an outpost has left to mine (similar to the gameplay planner) (TODO)
 - [x] Display ascension goal in the Reincarnation current level
 - [ ] _Display how much SWP/s is from the wave, how much is from the expeditions, and total_
