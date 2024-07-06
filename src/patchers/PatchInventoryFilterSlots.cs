@@ -45,14 +45,16 @@ class PatchInventoryFilterSlots
         // order is 0 = sword, 1 = head, 2 = shield, 3 = gloves, 4 = torso, 5 = boots
 
         for (int i = 0; i < GM.PD.ItemFilterSlotCount; i++) {
+            if (itemData.ItemType != i) {
+                continue;
+            }
+
             ItemData itemData2 = inventoryItems[i];
             if (itemData2.Locked == 0
             && (itemData2.ItemRarity < itemData.ItemRarity || (itemData2.ItemRarity == itemData.ItemRarity && itemData2.BaseItemRating < itemData.BaseItemRating)))
             {
-                if (itemData.ItemType == i) {
-                    itemData = itemData2;
-                    num = i;
-                }
+                itemData = itemData2;
+                num = i;
             }
         }
 
