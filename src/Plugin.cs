@@ -24,6 +24,7 @@ public class Plugin : BaseUnityPlugin
         harmony.PatchAll();
 
         gameObject.AddComponent<EnhancingButtonExtendedLoader>();
+        gameObject.AddComponent<SortGearExtendedLoader>();
 
         StartCoroutine(WaitForComponentCoroutine("ButtonTown", (GameObject gameObject) =>
         {
