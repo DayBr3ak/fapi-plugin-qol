@@ -16,6 +16,7 @@ After that, just download the plugin in the release area, and place the folder F
 - [x] Right Click on the expedition tab to open the town center
 - [x] Right Click on the Gear Enhance Button will enhance all equipped gear, after asking for confirmation
 - [x] Right Click on the Gear Soring Button will toggle auto sort every 1 seconds
+- [x] When Inventory is full, any new gear dropping from potatoes, that is better than the first 6 slots in the inventory will be placed in those slots, instead of being automatically scrapped
 - [ ] Add an estimation of how long an outpost has left to mine (similar to the gameplay planner) (TODO)
 - [x] Display ascension goal in the Reincarnation current level
 - [ ] _Display how much SWP/s is from the wave, how much is from the expeditions, and total_

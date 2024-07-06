@@ -16,16 +16,10 @@ public class SortGearExtended : RightClickBehavior
     private bool IsEnabled = false;
     private Coroutine animateCoro;
     private Coroutine updateCoro;
-    private float updateInterval = 1.0f;
+    private float updateInterval = 4.0f;
 
     public void Awake()
     {
-        if (GameManager.i.PD.SoulEquipmentSorting != 1) {
-            Plugin.StaticLogger.LogInfo("The player does not have the sorting soul upgrade");
-            Destroy(this);
-            return;
-        }
-
         Sprite sprite = Resources.FindObjectsOfTypeAll<Sprite>().FirstOrDefault(s => s.name == "AutoGear");
         if (sprite) {
             Sprite = sprite;
@@ -120,7 +114,11 @@ public class SortGearExtendedLoader : MonoBehaviour
     {
         yield return StartCoroutine(Utils.WaitForComponentCoroutine("EquipmentSortingButton"));
         var targetGameObject = GameObject.Find("EquipmentSortingButton");
-        targetGameObject.AddComponent<SortGearExtended>();
+        if (GameManager.i.PD.SoulEquipmentSorting == 1) {
+            targetGameObject.AddComponent<SortGearExtended>();
+        } else {
+            Plugin.StaticLogger.LogInfo("The player does not have the sorting soul upgrade");
+        }
         Destroy(this);
     }
 }
