@@ -20,6 +20,12 @@ public class SortGearExtended : RightClickBehavior
 
     public void Awake()
     {
+        if (GameManager.i.PD.SoulEquipmentSorting != 1) {
+            Plugin.StaticLogger.LogInfo("The player does not have the sorting soul upgrade");
+            Destroy(this);
+            return;
+        }
+
         Sprite sprite = Resources.FindObjectsOfTypeAll<Sprite>().FirstOrDefault(s => s.name == "AutoGear");
         if (sprite) {
             Sprite = sprite;
