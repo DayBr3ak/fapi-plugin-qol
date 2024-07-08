@@ -25,6 +25,7 @@ public class Plugin : BaseUnityPlugin
 
         gameObject.AddComponent<EnhancingButtonExtendedLoader>();
         gameObject.AddComponent<SortGearExtendedLoader>();
+        gameObject.AddComponent<MinerUpgradeButtonExtendedLoader>();
 
         StartCoroutine(WaitForComponentCoroutine("ButtonTown", (GameObject gameObject) =>
         {
@@ -36,16 +37,6 @@ public class Plugin : BaseUnityPlugin
             gameObject.AddComponent<ExpeditionButtonExtended>();
         }));
 
-        // StartCoroutine(WaitForComponentCoroutine("ValidEnhancingButton", (GameObject gameObject) => {
-        //     Plugin.StaticLogger.LogInfo($"{gameObject.name} on {gameObject.gameObject.name}");
-        //     var panel = GameObject.Find("EquipmentMain");
-
-        //     var btn = panel.AddComponent<GearUpgradeAllEquippedButton>();
-
-        //     var original = GameObject.Find("ValidEnhancingButton");
-        //     btn.originalButton = original.GetComponent<Button>();
-        //     btn.offset = new Vector2(0, 130);
-        // }));
         Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
     }
 
